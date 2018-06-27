@@ -21,7 +21,7 @@ input {
 }
 
 .wrapper {
-  max-width: 680px;
+  max-width: 768px;
   margin: 0 auto;
 }
 
@@ -46,4 +46,8 @@ input {
   left: 50%;
   transform: translateX(-50%);
   color: rgba(0, 0, 0, 0.5);
+}
+
+.plo {
+  width: 100%;
 }

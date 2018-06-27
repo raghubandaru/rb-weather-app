@@ -4,8 +4,10 @@
   "private": true,
   "dependencies": {
     "immutable": "^3.8.2",
+    "plotly.js": "^1.38.3",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
+    "react-plotly.js": "^2.2.0",
     "react-redux": "^5.0.7",
     "react-scripts": "1.1.4",
     "redux": "^4.0.0",
