@@ -4,9 +4,7 @@ import { connect } from "react-redux";
 import Plot from "react-plotly.js";
 import {
   changeLocation,
-  setData,
-  setDates,
-  setTemps,
+  fetchData,
   setSelectedDate,
   setSelectedTemp
 } from "./actions";
@@ -71,25 +69,7 @@ class App extends React.Component {
     let location = encodeURIComponent(this.props.location);
     let url = `http://api.openweathermap.org/data/2.5/forecast?q=${location}&APPID=${API_KEY}&units=metric`;
 
-    fetch(url)
-      .then(result => result.json())
-      .then(data => {
-        let list = data.list;
-        let dates = [];
-        let temps = [];
-
-        list.forEach(element => {
-          dates.push(element.dt_txt);
-          temps.push(element.main.temp);
-        });
-
-        this.props.dispatch(setData(data));
-        this.props.dispatch(setDates(dates));
-        this.props.dispatch(setTemps(temps));
-        this.props.dispatch(setSelectedDate(""));
-        this.props.dispatch(setSelectedTemp(null));
-      })
-      .catch(error => console.log("error occurred"));
+    this.props.dispatch(fetchData(url));
   };
 
   changeLocation = event => {

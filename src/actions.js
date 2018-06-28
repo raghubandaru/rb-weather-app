@@ -39,3 +39,27 @@ export function setTemps(temps) {
     temps: temps
   };
 }
+
+export function fetchData(url) {
+  return dispatch => {
+    fetch(url)
+      .then(result => result.json())
+      .then(data => {
+        let list = data.list;
+        let dates = [];
+        let temps = [];
+
+        list.forEach(element => {
+          dates.push(element.dt_txt);
+          temps.push(element.main.temp);
+        });
+
+        dispatch(setData(data));
+        dispatch(setDates(dates));
+        dispatch(setTemps(temps));
+        dispatch(setSelectedDate(""));
+        dispatch(setSelectedTemp(null));
+      })
+      .catch(error => console.log("error occurred"));
+  };
+}
