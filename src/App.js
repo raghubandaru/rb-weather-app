@@ -1,22 +1,20 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { connect } from "react-redux";
 import Plot from "react-plotly.js";
+import {
+  changeLocation,
+  setData,
+  setDates,
+  setTemps,
+  setSelectedDate,
+  setSelectedTemp
+} from "./actions";
 import "./App.css";
 
 const API_KEY = process.env.REACT_APP_API_KEY;
 
 class App extends React.Component {
-  state = {
-    location: "",
-    data: {},
-    dates: [],
-    temps: [],
-    selected: {
-      date: "",
-      temp: null
-    }
-  };
-
   componentDidMount() {
     this.drawPlot();
   }
@@ -32,8 +30,8 @@ class App extends React.Component {
 
     let data = [
         {
-          x: this.state.dates,
-          y: this.state.temps,
+          x: this.props.dates,
+          y: this.props.temps,
           type: "scatter",
           marker: { color: "red" }
         }
@@ -62,18 +60,15 @@ class App extends React.Component {
 
   onPlotClick = data => {
     if (data.points) {
-      this.setState({
-        selected: {
-          date: data.points[0].x,
-          temp: data.points[0].y
-        }
-      });
+      var number = data.points[0].pointNumber;
+      this.props.dispatch(setSelectedDate(this.props.dates[number]));
+      this.props.dispatch(setSelectedTemp(this.props.temps[number]));
     }
   };
 
   fetchData = event => {
     event.preventDefault();
-    let location = encodeURIComponent(this.state.location);
+    let location = encodeURIComponent(this.props.location);
     let url = `http://api.openweathermap.org/data/2.5/forecast?q=${location}&APPID=${API_KEY}&units=metric`;
 
     fetch(url)
@@ -88,23 +83,24 @@ class App extends React.Component {
           temps.push(element.main.temp);
         });
 
-        this.setState({
-          data,
-          dates,
-          temps
-        });
+        this.props.dispatch(setData(data));
+        this.props.dispatch(setDates(dates));
+        this.props.dispatch(setTemps(temps));
+        this.props.dispatch(setSelectedDate(""));
+        this.props.dispatch(setSelectedTemp(null));
       })
       .catch(error => console.log("error occurred"));
   };
 
   changeLocation = event => {
-    this.setState({ location: event.target.value });
+    //this.setState({ location: event.target.value });
+    this.props.dispatch(changeLocation(event.target.value));
   };
 
   render() {
     let currentTemp = "Enter Location";
-    if (this.state.data.list) {
-      currentTemp = this.state.data.list[0].main.temp;
+    if (this.props.data.list) {
+      currentTemp = this.props.data.list[0].main.temp;
     }
 
     return (
@@ -116,7 +112,7 @@ class App extends React.Component {
             <input
               type="text"
               placeholder={"City, Country"}
-              value={this.state.location}
+              value={this.props.location}
               onChange={this.changeLocation}
             />
           </label>
@@ -124,8 +120,8 @@ class App extends React.Component {
         <div className="wrapper">
           <p className="temp-wrapper">
             <span className="temp">
-              {this.state.selected.temp
-                ? this.state.selected.temp
+              {this.props.selected.temp
+                ? this.props.selected.temp
                 : currentTemp}
             </span>
             {currentTemp !== "Enter Location" ? (
@@ -134,15 +130,19 @@ class App extends React.Component {
               ""
             )}
             <span className="temp-date">
-              {this.state.selected.temp ? this.state.selected.date : ""}
+              {this.props.selected.temp ? this.props.selected.date : ""}
             </span>
           </p>
-          {this.state.data.list ? <h1>Forecast</h1> : null}
-          {this.state.data.list ? <div id="graph" /> : null}
+          {this.props.data.list ? <h1>Forecast</h1> : null}
+          {this.props.data.list ? <div id="graph" /> : null}
         </div>
       </div>
     );
   }
 }
 
-export default App;
+function mapStateToProps(state) {
+  return state;
+}
+
+export default connect(mapStateToProps)(App);
