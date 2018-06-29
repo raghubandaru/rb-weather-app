@@ -2,10 +2,6 @@ import React from "react";
 import Plot from "react-plotly.js";
 
 class Plotted extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
   componentDidMount() {
     console.log("component mounted");
   }
