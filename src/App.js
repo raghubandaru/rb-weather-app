@@ -14,7 +14,7 @@ const API_KEY = process.env.REACT_APP_API_KEY;
 class App extends React.Component {
   fetchData = event => {
     event.preventDefault();
-    let location = encodeURIComponent(this.props.location);
+    let location = encodeURIComponent(this.props.redux.get("location"));
     let url = `http://api.openweathermap.org/data/2.5/forecast?q=${location}&APPID=${API_KEY}&units=metric`;
 
     this.props.dispatch(fetchData(url));
@@ -23,20 +23,29 @@ class App extends React.Component {
   onPlotClick = data => {
     if (data.points) {
       var number = data.points[0].pointNumber;
-      this.props.dispatch(setSelectedDate(this.props.dates[number]));
-      this.props.dispatch(setSelectedTemp(this.props.temps[number]));
+      this.props.dispatch(
+        setSelectedDate(this.props.redux.getIn(["dates", number]))
+      );
+      this.props.dispatch(
+        setSelectedTemp(this.props.redux.getIn(["temps", number]))
+      );
     }
   };
 
   changeLocation = event => {
-    //this.setState({ location: event.target.value });
     this.props.dispatch(changeLocation(event.target.value));
   };
 
   render() {
     let currentTemp = "Enter Location";
-    if (this.props.data.list) {
-      currentTemp = this.props.data.list[0].main.temp;
+    if (this.props.redux.getIn(["data", "list"])) {
+      currentTemp = this.props.redux.getIn([
+        "data",
+        "list",
+        "0",
+        "main",
+        "temp"
+      ]);
     }
 
     return (
@@ -48,7 +57,7 @@ class App extends React.Component {
             <input
               type="text"
               placeholder={"City, Country"}
-              value={this.props.location}
+              value={this.props.redux.get("location")}
               onChange={this.changeLocation}
             />
           </label>
@@ -56,8 +65,8 @@ class App extends React.Component {
         <div className="wrapper">
           <p className="temp-wrapper">
             <span className="temp">
-              {this.props.selected.temp
-                ? this.props.selected.temp
+              {this.props.redux.getIn(["selected", "temp"])
+                ? this.props.redux.getIn(["selected", "temp"])
                 : currentTemp}
             </span>
             {currentTemp !== "Enter Location" ? (
@@ -66,15 +75,17 @@ class App extends React.Component {
               ""
             )}
             <span className="temp-date">
-              {this.props.selected.temp ? this.props.selected.date : ""}
+              {this.props.redux.getIn(["selected", "date"])
+                ? this.props.redux.getIn(["selected", "date"])
+                : ""}
             </span>
           </p>
-          {this.props.data.list ? <h1>Forecast</h1> : null}
-          {this.props.data.list ? (
+          {this.props.redux.getIn(["data", "list"]) ? <h1>Forecast</h1> : null}
+          {this.props.redux.getIn(["data", "list"]) ? (
             <Plotted
+              xData={this.props.redux.get("dates")}
+              yData={this.props.redux.get("temps")}
               onPlotClick={this.onPlotClick}
-              xData={this.props.dates}
-              yData={this.props.temps}
             />
           ) : null}
         </div>
@@ -84,7 +95,9 @@ class App extends React.Component {
 }
 
 function mapStateToProps(state) {
-  return state;
+  return {
+    redux: state
+  };
 }
 
 export default connect(mapStateToProps)(App);
