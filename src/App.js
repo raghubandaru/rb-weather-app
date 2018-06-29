@@ -1,7 +1,6 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import { connect } from "react-redux";
-import Plot from "react-plotly.js";
+import Plotted from "./Plotted";
 import {
   changeLocation,
   fetchData,
@@ -13,47 +12,12 @@ import "./App.css";
 const API_KEY = process.env.REACT_APP_API_KEY;
 
 class App extends React.Component {
-  componentDidMount() {
-    this.drawPlot();
-  }
+  fetchData = event => {
+    event.preventDefault();
+    let location = encodeURIComponent(this.props.location);
+    let url = `http://api.openweathermap.org/data/2.5/forecast?q=${location}&APPID=${API_KEY}&units=metric`;
 
-  componentDidUpdate() {
-    this.drawPlot();
-  }
-
-  drawPlot = () => {
-    if (document.getElementById("graph") === null) {
-      return;
-    }
-
-    let data = [
-        {
-          x: this.props.dates,
-          y: this.props.temps,
-          type: "scatter",
-          marker: { color: "red" }
-        }
-      ],
-      layout = {
-        margin: {
-          t: 10,
-          r: 50,
-          l: 50
-        }
-      },
-      config = { displayModeBar: false };
-
-    ReactDOM.render(
-      <Plot
-        data={data}
-        layout={layout}
-        config={config}
-        className="plo"
-        useResizeHandler={true}
-        onClick={this.onPlotClick}
-      />,
-      document.getElementById("graph")
-    );
+    this.props.dispatch(fetchData(url));
   };
 
   onPlotClick = data => {
@@ -62,14 +26,6 @@ class App extends React.Component {
       this.props.dispatch(setSelectedDate(this.props.dates[number]));
       this.props.dispatch(setSelectedTemp(this.props.temps[number]));
     }
-  };
-
-  fetchData = event => {
-    event.preventDefault();
-    let location = encodeURIComponent(this.props.location);
-    let url = `http://api.openweathermap.org/data/2.5/forecast?q=${location}&APPID=${API_KEY}&units=metric`;
-
-    this.props.dispatch(fetchData(url));
   };
 
   changeLocation = event => {
@@ -114,7 +70,13 @@ class App extends React.Component {
             </span>
           </p>
           {this.props.data.list ? <h1>Forecast</h1> : null}
-          {this.props.data.list ? <div id="graph" /> : null}
+          {this.props.data.list ? (
+            <Plotted
+              onPlotClick={this.onPlotClick}
+              xData={this.props.dates}
+              yData={this.props.temps}
+            />
+          ) : null}
         </div>
       </div>
     );
