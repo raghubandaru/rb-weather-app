@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Plotted /> renders correctly 1`] = `
+<PlotlyComponent
+  className="plo"
+  config={
+    Object {
+      "displayModeBar": false,
+    }
+  }
+  data={
+    Array [
+      Object {
+        "marker": Object {
+          "color": "red",
+        },
+        "type": "scatter",
+        "x": Object {},
+        "y": Object {},
+      },
+    ]
+  }
+  debug={false}
+  layout={
+    Object {
+      "margin": Object {
+        "l": 50,
+        "r": 50,
+        "t": 10,
+      },
+    }
+  }
+  style={
+    Object {
+      "display": "inline-block",
+      "position": "relative",
+    }
+  }
+  useResizeHandler={true}
+/>
+`;

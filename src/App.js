@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import Plotted from "./Plotted";
+import Header from "./Header";
 import {
   changeLocation,
   fetchData,
@@ -11,7 +12,7 @@ import "./App.css";
 
 const API_KEY = process.env.REACT_APP_API_KEY;
 
-class App extends React.Component {
+export class App extends React.Component {
   fetchData = event => {
     event.preventDefault();
     let location = encodeURIComponent(this.props.redux.get("location"));
@@ -50,7 +51,7 @@ class App extends React.Component {
 
     return (
       <div>
-        <h1>RB Weather Report</h1>
+        <Header />
         <form onSubmit={this.fetchData}>
           <label>
             I want to know the weather for:
