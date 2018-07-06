@@ -16,7 +16,7 @@ export class App extends React.Component {
   fetchData = event => {
     event.preventDefault();
     let location = encodeURIComponent(this.props.redux.get("location"));
-    let url = `http://api.openweathermap.org/data/2.5/forecast?q=${location}&APPID=${API_KEY}&units=metric`;
+    let url = `https://api.openweathermap.org/data/2.5/forecast?q=${location}&APPID=${API_KEY}&units=metric`;
 
     this.props.dispatch(fetchData(url));
   };
